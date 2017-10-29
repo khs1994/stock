@@ -20,6 +20,8 @@ CREATE TABLE stock(
   number BIGINT NOT NULL,
   # 佣金
   commission FLOAT(10,2) UNSIGNED NOT NULL,
-  # 税费
-  tax FLOAT(10,2) UNSIGNED NOT NULL
+  # 印花税 卖出 成交金额 * 0.1%
+  tax FLOAT(10,2) UNSIGNED NOT NULL,
+  # 过户费 上交所 双向 成交面额 *0.06 % 深圳包含在佣金中
+  transfer_fee FLOAT(10,3) UNSIGNED NOT NULL
 );
