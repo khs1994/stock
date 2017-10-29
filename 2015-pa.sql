@@ -1,5 +1,4 @@
 USE stock;
-SHOW VARIABLES LIKE 'character%';
 SELECT *
 FROM stock;
 INSERT stock VALUES (59, "2015_11_12", "平安证券", "600221", "海南航空", "buy", 4.20, 100, 5, 0, 0.06);
@@ -19,4 +18,4 @@ INSERT stock VALUES (69, "2015_12_25", "平安证券", "600050", "中国联通",
 
 INSERT stock VALUES (70, "2015_12_21", "平安证券", "000630", "铜陵有色", "buy", 3.76, 100, 5, 0, 0);
 INSERT stock VALUES (71, "2015_12_28", "平安证券", "000630", "铜陵有色", "buy", 3.64, 100, 5, 0, 0);
-INSERT stock VALUES (72, "2015_12_28", "平安证券", "000630", "铜陵有色", "sell", 3.59, 200, 5, 0.359 * 2, 0);
+INSERT stock VALUES (72, "2015_12_31", "平安证券", "000630", "铜陵有色", "sell", 3.59, 200, 5, 0.359 * 2, 0);
