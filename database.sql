@@ -1,7 +1,7 @@
-CREATE DATABASE laravel_admin;
-DROP DATABASE stock;
-USE stock;
-CREATE TABLE stock (
+# CREATE DATABASE laravel_admin;
+# DROP DATABASE stock;
+USE laravel_admin;
+CREATE TABLE IF NOT EXISTS stock (
   # ID
   id                BIGINT PRIMARY KEY AUTO_INCREMENT,
   # 时间
