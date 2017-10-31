@@ -1,4 +1,4 @@
-USE stock;
+USE laravel_admin;
 SELECT *
 FROM stock;
 INSERT stock VALUES (77, "2015_06_23", "财达证券", "600050", "中国联通", "buy", 7.68, 100, 5, 0, 0.06);

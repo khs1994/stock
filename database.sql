@@ -1,4 +1,4 @@
-CREATE DATABASE stock;
+CREATE DATABASE laravel_admin;
 DROP DATABASE stock;
 USE stock;
 CREATE TABLE stock (
