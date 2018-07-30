@@ -1,4 +1,4 @@
-USE laravel_admin;
+USE test;
 SHOW VARIABLES LIKE 'character%';
 SELECT *
 FROM stock;

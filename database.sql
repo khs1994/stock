@@ -1,6 +1,6 @@
-# CREATE DATABASE laravel_admin;
-# DROP DATABASE stock;
-USE laravel_admin;
+# CREATE DATABASE test;
+# DROP DATABASE test;
+USE test;
 CREATE TABLE IF NOT EXISTS stock (
   # ID
   id                BIGINT PRIMARY KEY AUTO_INCREMENT,
