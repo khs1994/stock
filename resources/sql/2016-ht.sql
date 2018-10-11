@@ -1,7 +1,5 @@
-USE test;
-SHOW VARIABLES LIKE 'character%';
-SELECT *
-FROM stock;
+use stock;
+
 INSERT stock VALUES (NULL, "2016_03_29", "华泰证券", "600221", "海南航空", "buy", 3.15, 100, 5, 0, 0.06);
 INSERT stock VALUES (NULL, "2016_05_05", "华泰证券", "600221", "海南航空", "sell", 3.27, 100, 5, 0.327, 0.06);
 

@@ -1,6 +1,5 @@
-USE test;
-SELECT *
-FROM stock;
+use stock;
+
 INSERT stock VALUES (NULL, "2015_08_27", "国联证券", "000725", "京东方A", "buy", 2.98, 100, 5, 0, 0);
 INSERT stock VALUES (NULL, "2015_09_01", "国联证券", "000725", "京东方A", "sell", 3.01, 100, 5, 0.301, 0);
 

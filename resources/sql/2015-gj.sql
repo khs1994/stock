@@ -1,7 +1,5 @@
-USE test;
-SHOW VARIABLES LIKE 'character%';
-SELECT *
-FROM stock;
+use stock;
+
 INSERT stock VALUES (NULL, "2015_03_03", "国金证券", "601618", "中国中冶", "buy", 4.52, 100, 5, 0, 100 * 0.06 * 0.01);
 INSERT stock VALUES (NULL, "2015_03_05", "国金证券", "601618", "中国中冶", "buy", 4.38, 100, 5, 0, 0.06);
 INSERT stock VALUES (NULL, "2015_03_13", "国金证券", "601618", "中国中冶", "sell", 4.57, 100, 5, 457 * 0.1 * 0.01, 0.06);
