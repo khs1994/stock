@@ -17,10 +17,11 @@ class Stock
         $this->pdo = new PDO(
             "mysql:host=$this->host;dbname=$this->dbname",
             $this->user,
-            $this->password);
+            $this->password
+        );
     }
 
-    public function exec($sql)
+    public function exec($sql, $single = true)
     {
         $stmt = $this->pdo->prepare($sql);
 
@@ -28,6 +29,10 @@ class Stock
 
         $result = $stmt->fetchAll();
 
-        return $result[0][0];
+        if ($single) {
+            return $result[0][0];
+        }
+
+        return $result;
     }
 }

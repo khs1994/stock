@@ -3,6 +3,7 @@ package _import
 import (
 	"database/sql"
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -14,5 +15,4 @@ func main() {
 	stmt, err := db.Prepare("")
 
 	stmt.Exec()
-
 }
