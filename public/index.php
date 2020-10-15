@@ -67,7 +67,7 @@ function get_result($securities_trader, $stock_name)
     $detail = [];
 
     if ($stock_name or $securities_trader) {
-        $detail = $stock->exec('select * from stock '.securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false),false);
+        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false), false);
     }
 
     return compact('buy', 'sell', 'dividend', 'tax', 'transfer_fee', 'commission', 'profit', 'detail');
@@ -104,9 +104,9 @@ if ($stock_list) {
     return;
 }
 
-if ($securities_trader and $json){
+if ($securities_trader and $json) {
     header('Content-Type: application/json');
-    echo json_encode(get_result($securities_trader,false));
+    echo json_encode(get_result($securities_trader, false));
 
     return;
 }
@@ -165,7 +165,7 @@ foreach ($stock_id_and_name as $item) {
     $stock_name = $item['name'];
     $prefix = 'SZ';
 
-    if (substr($stock_id, 0, 2) === '60') {
+    if (in_array(substr($stock_id, 0, 2), ['11', '60'])) {
         $prefix = 'SH';
     }
 
