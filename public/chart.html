@@ -1,0 +1,146 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/Chart.js/2.9.4/Chart.min.css" />
+</head>
+<script src="https://cdn.staticfile.org/Chart.js/2.9.4/Chart.min.js"></script>
+
+<!-- <div style="width: 100%;height: 90%;"> -->
+<canvas id="myChart"></canvas>
+<!-- </div> -->
+<script>
+    var ctx = document.getElementById("myChart");
+
+    let data = [];
+    let pointBorderColor = [];
+    let pointRadius = [];
+    let labels = [];
+
+    let stock = location.search
+
+    if (stock.substr(0, 6) === '?stock') {
+        stock = decodeURI(stock.substr(7));
+    }
+
+    fetch(location.protocol + '//' + location.host + '/' + location.search).then((res) => {
+        return res.json();
+    }).then(async (res) => {
+        let id = -1
+        let stock_id
+
+        console.log(res.detail.forEach(element => {
+            let type = element.type;
+            if (!stock_id) {
+                stock_id = element.stock_id
+            }
+
+            if (type !== 'sell' && type !== 'buy') {
+                return;
+            }
+
+            let [year, month, day] = element.time.split('_');
+
+            let date = new Date(year, month, day);
+
+            let color = element.type === 'buy' ? '#009933' : '#dd2200';
+
+            id++
+
+            item = { x: id, y: element.price }
+            // item = { x: date.getTime()/100000000, y: element.price }
+
+            data.push(Number(element.price));
+            pointBorderColor.push(color);
+            number = element.number
+            if (number <= 10) {
+                number = number * 10
+            }
+
+            pointRadius.push((number) / 10)
+            labels.push(element.time)
+        }));
+
+        // console.log(data);
+        // console.log(pointRadius);
+
+        // data = [{x:1,y:2}]
+
+        if (['60', '11'].indexOf(stock_id.substr(0, 2)) !== -1) {
+            stock_id = `sh${stock_id}`
+        } else {
+            stock_id = `sz${stock_id}`
+        }
+
+        let latestPrice = await fetch(`https://qt.gtimg.cn/q=${stock_id}`).then((res) => {
+            return res.text()
+        }).then((res) => {
+            return res.split('~')[3]
+        }
+        );
+
+        if (latestPrice) {
+            data.push(latestPrice);
+            labels.push('now');
+            pointBorderColor.push('#0083ff')
+            pointRadius.push(10)
+        }
+
+        var scatterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: stock,
+                    borderDashOffset: 2,
+                    // pointBorderWidth: 50,
+                    pointBackgroundColor: pointBorderColor,
+                    pointBorderColor,
+                    pointRadius,
+                    borderColor: '#0083ff',
+                    fill: true,
+                    backgroundColor: '#f2f8ff',
+                    borderColor: '#06c',
+                    data,
+                }]
+            },
+            options: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: stock,
+                    fontSize: 20,
+                },
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 10,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            ticks: {
+
+                            }
+                        }
+
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                stepSize: 0.01,
+                                beginAtZero: true,
+                                min: Math.min(...data) - 1,
+                                max: Math.max(...data) + 1
+                            },
+                            stacked: true
+                        },
+                    ]
+                }
+            }
+        });
+
+    });
+</script>

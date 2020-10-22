@@ -179,7 +179,8 @@ foreach ($stock_id_and_name as $item) {
     $f10_link = "https://xueqiu.com/stock/f10/compinfo.json?symbol=${prefix}${stock_id}";
     $xueqiu = "https://xueqiu.com/S/${prefix}${stock_id}";
 
-    echo "<a href='/?stock=$stock_name'>详情</a><br/>";
+    echo "<a href='/?stock=$stock_name'>成交明细(JSON)</a><br/>";
+    echo "<a href='/chart.html?stock=$stock_name'>成交明细(图表)</a><br/>";
     echo "<a href='$xueqiu'>行情</a><br/>";
     echo "<a href='$f10_link'>F10</a>";
 
