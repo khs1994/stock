@@ -1,6 +1,7 @@
 {
     "scripts": {
         "server": "php -S 0.0.0.0:8080 -t public",
-        "insert": "powershell ./resources/sql/insert.ps1"
+        "pwsh:insert": "powershell ./resources/sql/insert.ps1",
+        "sh:insert": "sh ./resources/sql/insert.sh"
     }
 }
