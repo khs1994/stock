@@ -2,6 +2,7 @@
     "scripts": {
         "server": "php -S 0.0.0.0:8080 -t public",
         "insert:pwsh": "powershell ./resources/sql/insert.ps1",
-        "insert:sh": "sh ./resources/sql/insert.sh"
+        "insert:sh": "sh ./resources/sql/insert.sh",
+        "offline": "php ./resources/sql/offline.php"
     }
 }

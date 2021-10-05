@@ -67,7 +67,7 @@ function get_result($securities_trader, $stock_name)
     $detail = [];
 
     if ($stock_name or $securities_trader) {
-        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false), false);
+        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false). 'ORDER BY time ASC', false);
     }
 
     return compact('buy', 'sell', 'dividend', 'tax', 'transfer_fee', 'commission', 'profit', 'detail');
