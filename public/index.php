@@ -67,7 +67,7 @@ function get_result($securities_trader, $stock_name)
     $detail = [];
 
     if ($stock_name or $securities_trader) {
-        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false). 'ORDER BY time ASC', false);
+        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false) . 'ORDER BY time ASC', false);
     }
 
     return compact('buy', 'sell', 'dividend', 'tax', 'transfer_fee', 'commission', 'profit', 'detail');
@@ -114,51 +114,114 @@ if ($securities_trader and $json) {
 ['buy' => $buy, 'sell' => $sell, 'dividend' => $dividend, 'tax' => $tax, 'transfer_fee' => $transfer_fee, 'commission' => $commission, 'profit' => $profit] = get_result($securities_trader, $stock_name);
 
 echo <<<EOF
-<h1>总览</h1>
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-买入 ¥$buy <hr>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.staticfile.org/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-卖出 ¥$sell <hr>
+<title>Stock | khs1994.com</title>
+</head>
 
-分红 ¥$dividend <hr>
+<body>
+<script src="https://cdn.staticfile.org/bootstrap/5.1.3/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<div class="row row-cols-1 row-cols-md-1 g-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-header">总览</div>
+      <ul class="list-group list-group-flush">
+      <li class="list-group-item">买入 ¥$buy</li>
+      <li class="list-group-item bg-light">卖出 ¥$sell</li>
+      <li class="list-group-item">分红 ¥$dividend</li>
+      <li class="list-group-item bg-light">印花税 ¥$tax</li>
+      <li class="list-group-item">过户费 ¥$transfer_fee</li>
+      <li class="list-group-item bg-light">券商佣金 ¥$commission</li>
+      <li class="list-group-item">盈利 ¥$profit</li>
+      </ul>
+</div></div></div>
+</div>
 
-印花税 ¥$tax <hr>
-
-过户费 ¥$transfer_fee <hr>
-
-券商佣金 ¥$commission <hr>
-
-盈利 ¥$profit <hr>
-
+<div>
 <h1>WEB</h1>
 
-<h4>券商详情</h4>
-<a href='?securities_trader=国联证券'>?securities_trader=国联证券</a>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-header">券商详情</div>
+      <div class="card-body">
+        <a class="card-link" href='?securities_trader=国联证券'>?securities_trader=国联证券</a>
+      </div>
+    </div> 
+  </div>        
+</div>
+
+<div>
 
 <h1>API</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <div class="col">
+    <div class="card">
+      <div class="card-header">券商列表</div>
+      <div class="card-body">
+        <a class="card-link" href='?securities_trader_list=true'>?securities_trader_list=true</a>
+      </div>
+    </div>
+  </div>  
+  <div class="col">
+    <div class="card">
+      <div class="card-header">股票列表</div>
+      <div class="card-body">
+        <a href='?stock_list=true'>?stock_list=true</a>
+      </div>
+    </div>
+   </div>
+   <div class="col">  
+     <div class="card">
+       <div class="card-header">券商全部成交</div>
+       <div class="card-body">
+         <a href='?securities_trader=国联证券&json=true'>?securities_trader=国联证券&json=true</a>
+       </div>
+      </div>
+    </div>
+    <div class="col">  
+      <div class="card">
+        <div class="card-header">股票全部成交</div>
+        <div class="card-body">
+          <a href='?stock=好当家'>?stock=好当家</a>
+        </div>
+      </div>  
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header">某券商某股票成交</div>
+        <div class="card-body">
+          <a href='?securities_trader=国金证券&stock=好当家'>?securities_trader=国金证券&stock=好当家</a>
+        </div>
+      </div>     
+    </div>
 
-<h4>券商列表</h4>
-<a href='?securities_trader_list=true'>?securities_trader_list=true</a>
-<h4>股票列表</h4>
-<a href='?stock_list=true'>?stock_list=true</a>
-<h4>券商全部成交</h4>
-<a href='?securities_trader=国联证券&json=true'>?securities_trader=国联证券&json=true</a>
-<h4>股票全部成交</h4>
-<a href='?stock=好当家'>?stock=好当家
-<h4>某券商某股票成交</h4>
-<a href='?securities_trader=国金证券&stock=好当家'>?securities_trader=国金证券&stock=好当家</a>
+</div> <!--row-->
+</div> <!--root-->
 EOF;
 
-echo "<h1>券商</h1><div style='height:50px'>";
+echo "<h1>券商</h1>
+<div style=\"text-decoration:none\" class=\"row row-cols-2 row-cols-md-6 g-4\">";
 
 foreach ($securities_traders as $item) {
     $securities_trader_item = $item['securities_trader'];
-    echo '<div
-    style="float:left;width:150px;hight:200px"
-    ><a href="/?securities_trader=' . $item['securities_trader'] . '"><h4>' . $securities_trader_item . '</h4></a></div>';
+    echo '<div class="col">
+      <div class="card text-center">
+        <div class="card-body">
+          <a class="btn btn-primary" href="/?securities_trader=' . $item['securities_trader'] . '">'
+        . $securities_trader_item . '</a>
+        </div>
+      </div>
+    </div>';
 }
 
-echo "</div><h1>股票</h1>";
+echo "</div><h1>股票</h1><div class=\"row row-cols-1 row-cols-sm-2 row-cols-md-6 g-4\">";
 
 foreach ($stock_id_and_name as $item) {
     $stock_id = $item['stock_id'];
@@ -172,20 +235,24 @@ foreach ($stock_id_and_name as $item) {
     ['buy' => $buy, 'sell' => $sell, 'dividend' => $dividend, 'tax' => $tax, 'transfer_fee' => $transfer_fee, 'commission' => $commission, 'profit' => $profit] = get_result($securities_trader, $stock_name);
 
     $color = $profit > 0 ? "red" : "green";
+    $bg_color = $color === 'red' ? "danger" : 'success';
 
-    echo "<div
-       style='float:left;width:170px'
-    ><h4 style='color: $color'>" . $prefix . $stock_id . $stock_name . '</h4>';
+    echo "
+    <div class=\"col\" style=''>
+    <div class=\"card text-white border-$bg_color\">
+    <div class=\"card-header bg-$bg_color\">" . $stock_name . '(' . $prefix . $stock_id . ')' . '</div>';
     $f10_link = "https://xueqiu.com/stock/f10/compinfo.json?symbol=${prefix}${stock_id}";
     $xueqiu = "https://xueqiu.com/S/${prefix}${stock_id}";
 
-    echo "<a href='/?stock=$stock_name'>成交明细(JSON)</a><br/>";
-    echo "<a href='/chart.html?stock=$stock_name'>成交明细(图表)</a><br/>";
-    echo "<a href='$xueqiu'>行情</a><br/>";
-    echo "<a href='$f10_link'>F10</a>";
+    echo "<ul class=\"list-group list-group-flush\">
+    <li class=\"list-group-item bg-light\"><a style=\"text-decoration:none\" class=\"card-link\" href='/?stock=$stock_name'>成交明细(JSON)</a></li>
+    <li class=\"list-group-item\"><a style=\"text-decoration:none\" class=\"card-link\" href='/chart.html?stock=$stock_name'>成交明细(图表)</a></li>
+    <li class=\"list-group-item bg-light\"><a style=\"text-decoration:none\" class=\"card-link\" href='$xueqiu'>行情</a></li>
+    <li class=\"list-group-item\"><a style=\"text-decoration:none\" class=\"card-link\" href='$f10_link'>F10</a></li>
+    </ul>";
 
-    echo "<p style='color: $color;font-size: large;font-family:\"Microsoft YaHei\"; '>盈亏 $profit</p>";
-    echo "</div>";
+    echo "<div class='card-footer bg-$bg_color'><p class=\"card-text\" style='font-size: large;font-family:\"Microsoft YaHei\"; '>盈亏 $profit</p>";
+    echo "</div></div></div>";
 
     continue;
     echo <<<EOF
@@ -203,3 +270,5 @@ foreach ($stock_id_and_name as $item) {
 </pre>
 EOF;
 }
+
+echo "</div></body>";
