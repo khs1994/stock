@@ -26,5 +26,7 @@ CREATE TABLE IF NOT EXISTS stock (
   # 印花税 卖出 成交金额 * 0.1%
   tax               DECIMAL(10, 2) UNSIGNED NOT NULL,
   # 2015/08/01 过户费 上交所 双向 成交面额 *0.002 % 深圳包含在佣金中
-  transfer_fee      DECIMAL(10, 3) UNSIGNED NOT NULL
+  transfer_fee      DECIMAL(10, 3) UNSIGNED NOT NULL,
+  # list id
+  list_id           BIGINT DEFAULT 0
 );

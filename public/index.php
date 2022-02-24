@@ -20,43 +20,93 @@ function stock_name_where($stock_name, bool $where = false)
     return $prefix . ($stock_name ? ($prefix ? '' : ' and ') . 'name="' . $stock_name . '"' : '');
 }
 
-function get_result($securities_trader, $stock_name)
+function year_sql($year,$prefix=true)
+{
+    if ($year) {
+        $sql = "SELECT DISTINCT list_id FROM stock WHERE type='sell' and time LIKE '${year}_%' and list_id !=0";
+        // echo $sql;
+
+        // var_dump($stock->exec($sql,false));
+
+        $stock = new Stock();
+
+        $r = $stock->exec($sql, false);
+
+        // var_dump($r);
+
+        $a = '(';
+
+        foreach ($r as $item) {
+            $a .= $item['list_id'] . ',';
+        }
+
+        $a = trim($a, ',');
+
+        $a = $a . ')';
+
+        // var_dump($a);
+
+        if(!$prefix){
+            return ' list_id in ' . $a;
+        }
+
+        $a = ' and list_id in ' . $a;
+
+        return $a;
+    }
+}
+
+function get_result($securities_trader, $stock_name, $year = null)
 {
     $stock = new Stock();
 
-    $sql = 'SELECT sum(price*number) FROM stock WHERE type="buy"' . securities_trader_where($securities_trader) . stock_name_where($stock_name);
+    # $year = $year ? " and time LIKE '${year}_%'":'';
+
+    // if ($securities_trader || $stock_name) {
+    //     $year = year_sql($year);
+    // } else {
+    //     $year = null;
+    // }
+
+    $year = year_sql($year);
 
     // 买入
+
+    $sql = 'SELECT sum(price*number) FROM stock WHERE type="buy"' . securities_trader_where($securities_trader) . stock_name_where($stock_name) . $year;
 
     $buy = $stock->exec($sql);
 
     // 卖出
 
-    $sql = 'SELECT sum(price*number) FROM stock WHERE type = "sell"' . securities_trader_where($securities_trader) . stock_name_where($stock_name);
+    $sql = 'SELECT sum(price*number) FROM stock WHERE type = "sell"' . securities_trader_where($securities_trader) . stock_name_where($stock_name) . $year;
 
     $sell = $stock->exec($sql);
 
     // 分红
 
-    $sql = 'SELECT sum(price*number) FROM stock WHERE type = "other"' . securities_trader_where($securities_trader) . stock_name_where($stock_name);
+    $sql = 'SELECT sum(price*number) FROM stock WHERE type = "other"' . securities_trader_where($securities_trader) . stock_name_where($stock_name) . $year;
 
     $dividend = $stock->exec($sql);
 
     // 印花税
 
-    $sql = 'select sum(round(price*number*0.001,2)) FROM stock WHERE type="sell" and left(stock_id, 2) not in ("11","12","15")' . securities_trader_where($securities_trader) . stock_name_where($stock_name);
+    $sql = 'select sum(round(price*number*0.001,2)) FROM stock WHERE type="sell" and left(stock_id, 2) not in ("11","12","15")' . securities_trader_where($securities_trader) . stock_name_where($stock_name) . $year;
 
     $tax = $stock->exec($sql);
 
     // 过户费
 
-    $sql = 'SELECT sum(round(transfer_fee,2)) FROM stock' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false);
+    if ($year && !($securities_trader || $stock_name)) {
+        $year = ' WHERE '. trim($year,' and ');
+    }
+
+    $sql = 'SELECT sum(round(transfer_fee,2)) FROM stock' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false) . $year;
 
     $transfer_fee = $stock->exec($sql);
 
     // 交易佣金
 
-    $sql = 'SELECT sum(commission) FROM stock' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false);
+    $sql = 'SELECT sum(commission) FROM stock' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false) . $year;
 
     $commission = $stock->exec($sql);
 
@@ -67,7 +117,7 @@ function get_result($securities_trader, $stock_name)
     $detail = [];
 
     if ($stock_name or $securities_trader) {
-        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false) . 'ORDER BY time ASC', false);
+        $detail = $stock->exec('select * from stock ' . securities_trader_where($securities_trader, true) . stock_name_where($stock_name, $securities_trader === false) . $year.'ORDER BY time ASC', false);
     }
 
     return compact('buy', 'sell', 'dividend', 'tax', 'transfer_fee', 'commission', 'profit', 'detail');
@@ -78,17 +128,18 @@ $stock_name = $_GET['stock'] ?? false;
 $securities_trader_list = $_GET['securities_trader_list'] ?? false;
 $stock_list = $_GET['stock_list'] ?? false;
 $json = $_GET['json'] ?? false;
+$year = $_GET['year'] ?? null;
 
 if ($stock_name) {
     header('Content-Type: application/json');
-    echo json_encode(get_result($securities_trader, $stock_name));
+    echo json_encode(get_result($securities_trader, $stock_name, $year));
 
     return;
 }
 
 $stock = new Stock();
 $securities_traders = $stock->exec('select DISTINCT securities_trader from stock', false);
-$stock_id_and_name = $stock->exec('select DISTINCT stock_id,name from stock' . ($securities_trader ? ' where securities_trader="' . $securities_trader . '"' : ''), false);
+$stock_id_and_name = $stock->exec('select DISTINCT stock_id,name from stock' . ($securities_trader ? ' where securities_trader="' . $securities_trader . '"' . year_sql($year) : ($year?" WHERE ".year_sql($year,false):'')), false);
 
 if ($securities_trader_list) {
     header('Content-Type: application/json');
@@ -106,12 +157,12 @@ if ($stock_list) {
 
 if ($securities_trader and $json) {
     header('Content-Type: application/json');
-    echo json_encode(get_result($securities_trader, false));
+    echo json_encode(get_result($securities_trader, false, $year));
 
     return;
 }
 
-['buy' => $buy, 'sell' => $sell, 'dividend' => $dividend, 'tax' => $tax, 'transfer_fee' => $transfer_fee, 'commission' => $commission, 'profit' => $profit] = get_result($securities_trader, $stock_name);
+['buy' => $buy, 'sell' => $sell, 'dividend' => $dividend, 'tax' => $tax, 'transfer_fee' => $transfer_fee, 'commission' => $commission, 'profit' => $profit] = get_result($securities_trader, $stock_name, $year);
 
 echo <<<EOF
 <head>
@@ -232,7 +283,7 @@ foreach ($stock_id_and_name as $item) {
         $prefix = 'SH';
     }
 
-    ['buy' => $buy, 'sell' => $sell, 'dividend' => $dividend, 'tax' => $tax, 'transfer_fee' => $transfer_fee, 'commission' => $commission, 'profit' => $profit] = get_result($securities_trader, $stock_name);
+    ['buy' => $buy, 'sell' => $sell, 'dividend' => $dividend, 'tax' => $tax, 'transfer_fee' => $transfer_fee, 'commission' => $commission, 'profit' => $profit] = get_result($securities_trader, $stock_name, $year);
 
     $color = $profit > 0 ? "red" : "green";
     $bg_color = $color === 'red' ? "danger" : 'success';
